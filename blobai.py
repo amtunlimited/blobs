@@ -32,33 +32,50 @@ def bestMove(board, move, alpha, beta, level):
 	#	if(b == board):
 	#		return None
 	#All checks if the board is full
-	if(level > 4 or all(board)):
-		#if so, return the sum for the score
-		return sum(board)
 	
-	best = -1 * move * 49
+	#This part is to limit levels
+	#if(level > 3 or all(board)):
+		#if so, return the sum for the score
+	#	return sum(board)
+	
+	passed = True
+	
+	best = -1 * move * 64
 	for i in xrange(len(board)):
 		if(board[i] == 0 and neighbour(board, i, move)):
+			passed = False
 			#Make the opposing move
 			board[i] = -1*move
 			#answer = bestMove(board, -1 * move, hist.append(board), alpha, beta, level+1)
 			answer = bestMove(board, -1 * move, alpha, beta, level+1)
+			if(move > 0):
+				answer = bestMove(board, -1 * move, max(alpha, best), beta, level+1)
+				if(answer >= beta):
+					return answer
+			else:
+				answer = bestMove(board, -1 * move, alpha, min(beta, best), level+1)
+				if(answer <= alpha):
+					return alpha
 			board[i] = 0
+			
 			if(answer is not None and (move * best) < (move * answer)):
 				best = answer
-	
+			
+	if(passed):
+		return sum(board)
 	return best
 
 #same as bestMove, but checking for the computer
 def comMove(board):
 	
-	best = -49
+	best = -64
+	alpha = -64
 	
 	for i in xrange(len(board)):
 		if(board[i] == 0 and neighbour(board, i, 1)):
 			#Make the opposing move
 			board[i] = 1
-			answer = bestMove(board, -1, 0, 0, 0)
+			answer = bestMove(board, -1, max(alpha, best), 64, 0)
 			print("The score for move {} is {}".format(i, answer))
 			board[i] = 0
 			if(answer is not None and best < answer):
