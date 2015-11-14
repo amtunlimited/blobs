@@ -34,9 +34,10 @@ def bestMove(board, move, alpha, beta, level):
 	#All checks if the board is full
 	
 	#This part is to limit levels
-	#if(level > 3 or all(board)):
+	if(level > 8 or all(board)):
+	#if(all(board)):
 		#if so, return the sum for the score
-	#	return sum(board)
+		return sum(board)
 	
 	passed = True
 	
@@ -47,22 +48,28 @@ def bestMove(board, move, alpha, beta, level):
 			#Make the opposing move
 			board[i] = -1*move
 			#answer = bestMove(board, -1 * move, hist.append(board), alpha, beta, level+1)
-			answer = bestMove(board, -1 * move, alpha, beta, level+1)
+			#answer = bestMove(board, -1 * move, alpha, beta, level+1)
 			if(move > 0):
 				answer = bestMove(board, -1 * move, max(alpha, best), beta, level+1)
 				if(answer >= beta):
+					board[i] = 0
 					return answer
+				if(answer is not None):
+					best = max(answer, best)
 			else:
 				answer = bestMove(board, -1 * move, alpha, min(beta, best), level+1)
 				if(answer <= alpha):
-					return alpha
+					board[i] = 0
+					return answer
+				if(answer is not None):
+					best = min(answer, best)
 			board[i] = 0
 			
-			if(answer is not None and (move * best) < (move * answer)):
-				best = answer
+			#if(answer is not None and (move * best) < (move * answer)):
+			#	best = answer
 			
 	if(passed):
-		return sum(board)
+		return bestMove(board, -1*move, alpha, beta, level+1)
 	return best
 
 #same as bestMove, but checking for the computer

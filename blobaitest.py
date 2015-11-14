@@ -7,6 +7,4 @@ board[48] = 1
 board[6] = -1
 board[42] = -1
 
-print("This is starting")
-answer = blobai.comMove(board)
-print(answer)
+print(blobai.comMove(board))
