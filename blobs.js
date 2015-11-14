@@ -1,4 +1,4 @@
-/*blobs.js: the frontend for the "simple" tictactoe game
+/*blobs.js: the frontend for the (relatively) simple game
   Written by: Aaron Tagliaboschi <aaron.tagliaboschi@gmail.com> and Phillip Peterson <phillipdpeterson@gmail.com>
  */
 
