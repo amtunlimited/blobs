@@ -99,7 +99,7 @@ var drawBoard = function(ctx,width,height,board) {
 //This turns an array into a string for the http requests
 var boardString = function(board) {
 	var bString = "";
-	for(var i=0; i<9; i++) {
+	for(var i=0; i<49; i++) {
 		switch(board[i]) {
 			case 1:
 				bString+="x";
@@ -121,7 +121,10 @@ var canvas = document.getElementById("board");
 var ctx = canvas.getContext('2d');
 
 //global variables
-var board = [0,0,0,0,0,0,0,0,0];
+var board = [];
+for(index = 0; index < 49; index++){
+	board[index] = 0;
+}
 //done is set to ture when an end condition has been reached
 var done = false;
 
@@ -180,13 +183,18 @@ canvas.addEventListener('click', function(event) {
 //Note, given a blank board, the ai will always choose the first space, so no
 //request is needed.
 document.getElementById("xstart").addEventListener('click', function(event) {
-	board = [1,0,0,0,0,0,0,0,0];
+	for(index = 0; index < 49; index++){
+		board[index] = 0;
+	}
 	done = false;
 }, false);
 
 //reset the game if the "Player Start" button is clicked. 
 document.getElementById("ostart").addEventListener('click', function(event) {
-	board = [0,0,0,0,0,0,0,0,0];
+	for(index = 0; index < 49; index++){
+		board[index] = 0;
+	}
+	
 	done = false;
 }, false);
 
@@ -195,12 +203,12 @@ var update = function() {
 	//Make a white square to blank out the canvas.
 	ctx.fillStyle="white";
     ctx.beginPath();
-    ctx.rect(0, 0, 300, 300);
+    ctx.rect(0, 0, 488, 488);
     ctx.closePath();
     ctx.fill();
     
     //Draw the board
-	drawBoard(ctx,300,300,board);
+	drawBoard(ctx,488,488,board);
 };
 
 //Finally, make the 'update' function run every 25ms
