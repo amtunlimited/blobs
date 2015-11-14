@@ -47,33 +47,16 @@ drawBack = function(ctx,width,height) {
 	ctx.stroke();
 };
 
-//This draws an 'x' in a given position on the board
-var drawX = function(ctx,pos,width,height,color) {
-	ctx.strokeStyle = color;
-	ctx.lineWidth = 6;
-	ctx.lineCap = 'round';
-	
-	//This transforms the position into 2D
-	x = pos%3;
-	y = (pos-x)/3;
-	ctx.beginPath();
-		ctx.moveTo((width/3)*x + 20, (height/3)*y + 20);
-		ctx.lineTo((width/3)*(x+1) - 20, (height/3)*(y+1) - 20);
-		ctx.moveTo((width/3)*x + 20, (height/3)*(y+1) - 20);
-		ctx.lineTo((width/3)*(x+1) - 20, (height/3)*y + 20);
-	ctx.stroke();
-};
-
 //This draws an 'o' in a given position
 var drawO = function(ctx,pos,width,height,color) {
 	ctx.strokeStyle = color;
 	ctx.lineWidth = 6;
 	ctx.lineCap = 'round';
 	
-	x = pos%3;
-	y = (pos-x)/3;
+	x = pos%7;
+	y = (pos-x)/7;
 	ctx.beginPath();
-		ctx.arc((width/6)*(2*x+1), (height/6)*(2*y+1), (width/6) - 15, 0, 7);
+		ctx.arc((width/(7*2))*(2*x+1), (height/(7*2))*(2*y+1), (width/(7*2)) - 15, 0, 7);
 	ctx.stroke();
 };
 
@@ -85,7 +68,7 @@ var drawBoard = function(ctx,width,height,board) {
 	
 	drawBack(ctx,width,height);
 	
-	for (var i = 0; i < 9; i++) {
+	for (var i = 0; i < board.length; i++) {
 		switch(board[i]) {
 			case 1:
 				drawX(ctx,i,width,height,black);
@@ -133,8 +116,9 @@ canvas.addEventListener('click', function(event) {
 	//This is the math to get the position of the click
 	var x = event.pageX - canvas.offsetLeft;
 	var y = event.pageY - canvas.offsetTop;
-	var pos = ((x- (x%100))/100) + ((y- (y%100))/100) * 3;
-	
+	var pos = ((x- (x%70))/70) + ((y- (y%70))/70) * 7;
+	board[pos] = -1;
+	/*
 	//all of this stuff only happens if the area is blank and the game isn't finished
 	if(board[pos] === 0 && !done) {
 		board[pos] = -1;
@@ -176,6 +160,7 @@ canvas.addEventListener('click', function(event) {
 		xmlMove.open("GET", ttt + "move/" + boardString(board), true);
 		xmlMove.send(null);
 	}
+	*/
 
 }, false);
 
