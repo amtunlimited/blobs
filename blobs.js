@@ -50,13 +50,13 @@ drawBack = function(ctx,width,height) {
 //This draws an 'o' in a given position
 var drawO = function(ctx,pos,width,height,color) {
 	ctx.strokeStyle = color;
-	ctx.lineWidth = 6;
+	ctx.lineWidth = 2;
 	ctx.lineCap = 'round';
 	
 	x = pos%7;
 	y = (pos-x)/7;
 	ctx.beginPath();
-		ctx.arc((width/(7*2))*(2*x+1), (height/(7*2))*(2*y+1), (width/(7*2)) - 15, 0, 7);
+		ctx.arc((width/(7*2))*(2*x+1), (height/(7*2))*(2*y+1), (width/(7*2)) - 5, 0, 7);
 	ctx.stroke();
 };
 
