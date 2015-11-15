@@ -11,53 +11,43 @@ drawBack = function(ctx,width,height) {
 	ctx.beginPath();
 		//draw horizontal lines
 		ctx.moveTo(4,4);
-		ctx.lineTo(width-4,4);
-		ctx.moveTo(6,height/7);
-		ctx.lineTo(width-5,height/7);
-		ctx.moveTo(6,height/7*2);
-		ctx.lineTo(width-5,height/7*2);
-		ctx.moveTo(6,height/7*3);
-		ctx.lineTo(width-5,height/7*3);
-		ctx.moveTo(6,height/7*4);
-		ctx.lineTo(width-5,height/7*4);
-		ctx.moveTo(6,height/7*5);
-		ctx.lineTo(width-5,height/7*5);
-		ctx.moveTo(6,height/7*6);
-		ctx.lineTo(width-5,height/7*6);
-		ctx.moveTo(4,height/7*7);
-		ctx.lineTo(width,height/7*7);
+		ctx.lineTo(4,height-4);
+		for(i = 1; i < 8; i++){
+			ctx.moveTo(6,height/7*i);
+			ctx.lineTo(width-5,height/7*i);
+		}
 		
 		//draw vertical lines
 		ctx.moveTo(4,4);
-		ctx.lineTo(4,height-4);
-		ctx.moveTo(width/7,6);
-		ctx.lineTo(width/7,height-5);
-		ctx.moveTo(width/7*2,6);
-		ctx.lineTo(width/7*2,height-5);
-		ctx.moveTo(width/7*3,6);
-		ctx.lineTo(width/7*3,height-5);
-		ctx.moveTo(width/7*4,6);
-		ctx.lineTo(width/7*4,height-5);
-		ctx.moveTo(width/7*5,6);
-		ctx.lineTo(width/7*5,height-5);
-		ctx.moveTo(width/7*6,6);
-		ctx.lineTo(width/7*6,height-5);
-		ctx.moveTo(width/7*7,4);
-		ctx.lineTo(width/7*7,height);
+		ctx.lineTo(width-4,4);
+		for(i = 0; i < 8; i++){
+			ctx.moveTo(width/7*i,6);
+			ctx.lineTo(width/7*i,height-5);
+		}
 	ctx.stroke();
 };
 
 //This draws an 'o' in a given position
-var drawO = function(ctx,pos,width,height,color) {
+var drawO = function(ctx,pos,width,height,color,move) {
 	ctx.strokeStyle = color;
 	ctx.lineWidth = 2;
 	ctx.lineCap = 'round';
+	ctx.fillStyle="black";
 	
 	x = pos%7;
 	y = (pos-x)/7;
 	ctx.beginPath();
 		ctx.arc((width/(7*2))*(2*x+1), (height/(7*2))*(2*y+1), (width/(7*2)) - 5, 0, 7);
 	ctx.stroke();
+	
+	if(move === 1){
+		ctx.fill()
+	}
+	
+	if(pos === selected){
+		ctx.fillStyle = "LightGrey";
+		ctx.fill();
+	}
 };
 
 //This combines all of the other 'draw's together and draws the 'x's and 'o's 
@@ -69,12 +59,8 @@ var drawBoard = function(ctx,width,height,board) {
 	drawBack(ctx,width,height);
 	
 	for (var i = 0; i < board.length; i++) {
-		switch(board[i]) {
-			case 1:
-				drawX(ctx,i,width,height,black);
-				break;
-			case -1:
-				drawO(ctx,i,width,height,black);
+		if(board[i] != 0){
+			drawO(ctx,i,width,height,black,board[i]);
 		}
 	}
 };
@@ -82,7 +68,7 @@ var drawBoard = function(ctx,width,height,board) {
 //This turns an array into a string for the http requests
 var boardString = function(board) {
 	var bString = "";
-	for(var i=0; i<49; i++) {
+	for(var i=0; i<board.length; i++) {
 		switch(board[i]) {
 			case 1:
 				bString+="x";
@@ -102,12 +88,19 @@ var boardString = function(board) {
 //this is the actual board on the page
 var canvas = document.getElementById("board");
 var ctx = canvas.getContext('2d');
+var selected = -1;
 
 //global variables
 var board = [];
 for(index = 0; index < 49; index++){
 	board[index] = 0;
 }
+
+board[0] = 1;
+board[6] = -1;
+board[42] = -1;
+board[48] = 1;
+
 //done is set to ture when an end condition has been reached
 var done = false;
 
@@ -117,12 +110,112 @@ canvas.addEventListener('click', function(event) {
 	var x = event.pageX - canvas.offsetLeft;
 	var y = event.pageY - canvas.offsetTop;
 	var pos = ((x- (x%70))/70) + ((y- (y%70))/70) * 7;
-	board[pos] = -1;
-	/*
-	//all of this stuff only happens if the area is blank and the game isn't finished
-	if(board[pos] === 0 && !done) {
-		board[pos] = -1;
+	var move = false;
+	
+	//if a piece has been selected
+	if(selected != -1){
+		//if the selected piece has been clicked on again, deselect it
+		if(pos === selected){
+			selected = -1;
+		//if an empty spot on the board has been clicked, see if it is a valid move.
+		}else if(board[pos] === 0){
+			for(x = -2; x < 3; x++){
+				if(selected%7 < 2){
+					if((selected + ((7*x)-selected%7)) <= pos && pos <= (selected + ((7*x)+2))){
+						move = true;
+						break;
+					}
+				}else if(selected%7 > 2){
+					if((selected + ((7*x)-2)) <= pos && pos <= (selected + ((7*x)+(6-selected%7)))){
+						move = true;
+						break;
+					}
+				}else{
+					if((selected + ((7*x)-2)) <= pos && pos <= (selected + ((7*x)+2))){
+						move = true;
+						break;
+					}
+				}
+			}
+		}
 		
+		if(move){
+			board[selected] = 0;
+			board[pos] = -1;
+			selected = -1;
+		}
+	//if a piece has not been selected
+	}else{
+		//all of this stuff only happens if the area is blank and the game isn't finished
+		if(board[pos] === 0) {
+			//if we are in the top row
+			if(pos-8 < 0){
+				//only check squares that are not out of bounds
+				for(x = 0; x <= pos - 6; x++){
+					if(board[x] === -1){
+						move = true;
+					}
+				}
+				
+				//check all squares to the right and direcly below
+				if(board[pos+1] === -1 || board[pos+7] === -1 || board[pos+8] === -1){
+					move = true;
+				//if necessary, check the squares to the left
+				}else if(pos != 7){
+					if(board[pos-1] === -1 || board[pos+6] === -1){
+						move = true;
+					}
+				}
+			//if we are in the bottom row
+			}else if(pos+8 > 48){
+				//only check squares that are not out of bounds
+				for(x = 48; x >= pos+6; x--){
+					if(board[x] === -1){
+						move = true;
+					}
+				}
+				
+				//check all squares to the left and direcly above
+				if(board[pos-1] === -1 || board[pos-7] === -1 || board[pos-8] === -1){
+					move = true;
+				//if necessary, check the squares to the right
+				}else if(pos != 41){
+					if(board[pos+1] === -1 || board[pos-6] === -1){
+						move = true;
+					}
+				}
+			//otherwise, check the squares immediately above and below ours
+			}else if(board[pos-7] === -1 || board[pos+7] ===-1){
+				move = true;
+			//if the move is still not valid
+			}else{
+				//check the left side for all squares not on the left side of the board
+				if(pos%7 > 0){
+					for(x = 0; x < 3; x++){
+						if(board[pos-8+(x*7)] === -1){
+							move = true;
+						}
+					}
+				}
+				//check the right side for all squares not on the right side of the board
+				if(pos%7 < 6){
+					for(x = 0; x < 3; x++){
+						if(board[pos-6+(x*7)] === -1){
+							move = true;
+						}
+					}
+				}
+			}
+			
+			if(move){
+				board[pos] = -1;
+			}
+		}else if(board[pos] === -1){
+			selected = pos;
+		}
+	}
+	/*
+	if(move){
 		//The part of the http request that is reused.
 		var ttt = "http://aarontag.com/tictactoe/ttt.py/";
 		
@@ -161,6 +254,7 @@ canvas.addEventListener('click', function(event) {
 		xmlMove.send(null);
 	}
 	*/
+	
 
 }, false);
 
@@ -171,6 +265,12 @@ document.getElementById("xstart").addEventListener('click', function(event) {
 	for(index = 0; index < 49; index++){
 		board[index] = 0;
 	}
+	
+	board[0] = 1;
+	board[6] = -1;
+	board[42] = -1;
+	board[48] = 1;
+	
 	done = false;
 }, false);
 
@@ -179,6 +279,11 @@ document.getElementById("ostart").addEventListener('click', function(event) {
 	for(index = 0; index < 49; index++){
 		board[index] = 0;
 	}
+	
+	board[0] = 1;
+	board[6] = -1;
+	board[42] = -1;
+	board[48] = 1;
 	
 	done = false;
 }, false);
