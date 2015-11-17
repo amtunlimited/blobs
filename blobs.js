@@ -223,11 +223,11 @@ canvas.addEventListener('click', function(event) {
 			selected = pos;
 		}
 	}
-	/*
+	
 	if(move){
 		compTurn();
 	}
-	*/
+	
 	
 
 }, false);
