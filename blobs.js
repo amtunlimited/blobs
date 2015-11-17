@@ -110,6 +110,9 @@ board[48] = 1;
 //done is set to ture when an end condition has been reached
 var done = false;
 
+//playermove is true when the player can move, false otherwise
+var playermove = true;
+
 //This event is triggered when the canvas is clicked (and )
 canvas.addEventListener('click', function(event) { 
 	//This is the math to get the position of the click
@@ -118,118 +121,117 @@ canvas.addEventListener('click', function(event) {
 	var pos = ((x- (x%70))/70) + ((y- (y%70))/70) * 7;
 	var move = false;
 	
-	//if a piece has been selected
-	if(selected != -1){
-		//if the selected piece has been clicked on again, deselect it
-		if(pos === selected){
-			selected = -1;
-		//if an empty spot on the board has been clicked, see if it is a valid move.
-		}else if(board[pos] === 0){
-			for(x = -2; x < 3; x++){
-				if(selected%7 < 2){
-					if((selected + ((7*x)-selected%7)) <= pos && pos <= (selected + ((7*x)+2))){
-						move = true;
-						break;
-					}
-				}else if(selected%7 > 2){
-					if((selected + ((7*x)-2)) <= pos && pos <= (selected + ((7*x)+(6-selected%7)))){
-						move = true;
-						break;
-					}
-				}else{
-					if((selected + ((7*x)-2)) <= pos && pos <= (selected + ((7*x)+2))){
-						move = true;
-						break;
-					}
-				}
-			}
-		}
-		
-		//if the click is a valid move, move the selected piece there
-		if(move){
-			board[selected] = 0;
-			board[pos] = -1;
-			selected = -1;
-		}
-	//if a piece has not been selected
-	}else{
-		//all of this stuff only happens if the area is blank and the game isn't finished
-		if(board[pos] === 0) {
-			//if we are in the top row
-			if(pos-8 < 0){
-				//only check squares that are not out of bounds
-				for(x = 0; x <= pos - 6; x++){
-					if(board[x] === -1){
-						move = true;
-					}
-				}
-				
-				//check all squares to the right and direcly below
-				if(board[pos+1] === -1 || board[pos+7] === -1 || board[pos+8] === -1){
-					move = true;
-				//if necessary, check the squares to the left
-				}else if(pos != 7){
-					if(board[pos-1] === -1 || board[pos+6] === -1){
-						move = true;
-					}
-				}
-			//if we are in the bottom row
-			}else if(pos+8 > 48){
-				//only check squares that are not out of bounds
-				for(x = 48; x >= pos+6; x--){
-					if(board[x] === -1){
-						move = true;
-					}
-				}
-				
-				//check all squares to the left and direcly above
-				if(board[pos-1] === -1 || board[pos-7] === -1 || board[pos-8] === -1){
-					move = true;
-				//if necessary, check the squares to the right
-				}else if(pos != 41){
-					if(board[pos+1] === -1 || board[pos-6] === -1){
-						move = true;
-					}
-				}
-			//otherwise, check the squares immediately above and below ours
-			}else if(board[pos-7] === -1 || board[pos+7] ===-1){
-				move = true;
-			//if the move is still not valid
-			}else{
-				//check the left side for all squares not on the left side of the board
-				if(pos%7 > 0){
-					for(x = 0; x < 3; x++){
-						if(board[pos-8+(x*7)] === -1){
+	//if it is the players turn
+	if(playermove){
+		//if a piece has been selected
+		if(selected != -1){
+			//if the selected piece has been clicked on again, deselect it
+			if(pos === selected){
+				selected = -1;
+			//if an empty spot on the board has been clicked, see if it is a valid move.
+			}else if(board[pos] === 0){
+				for(x = -2; x < 3; x++){
+					if(selected%7 < 2){
+						if((selected + ((7*x)-selected%7)) <= pos && pos <= (selected + ((7*x)+2))){
 							move = true;
+							break;
 						}
-					}
-				}
-				//check the right side for all squares not on the right side of the board
-				if(pos%7 < 6){
-					for(x = 0; x < 3; x++){
-						if(board[pos-6+(x*7)] === -1){
+					}else if(selected%7 > 2){
+						if((selected + ((7*x)-2)) <= pos && pos <= (selected + ((7*x)+(6-selected%7)))){
 							move = true;
+							break;
+						}
+					}else{
+						if((selected + ((7*x)-2)) <= pos && pos <= (selected + ((7*x)+2))){
+							move = true;
+							break;
 						}
 					}
 				}
 			}
 			
-			//If the click is a valid move, insert a new piece
+			//if the click is a valid move, move the selected piece there
 			if(move){
+				board[selected] = 0;
 				board[pos] = -1;
+				selected = -1;
 			}
-		//if the click is on a player piece, select it
-		}else if(board[pos] === -1){
-			selected = pos;
+		//if a piece has not been selected
+		}else{
+			//all of this stuff only happens if the area is blank and the game isn't finished
+			if(board[pos] === 0) {
+				//if we are in the top row
+				if(pos-8 < 0){
+					//only check squares that are not out of bounds
+					for(x = 0; x <= pos - 6; x++){
+						if(board[x] === -1){
+							move = true;
+						}
+					}
+					
+					//check all squares to the right and direcly below
+					if(board[pos+1] === -1 || board[pos+7] === -1 || board[pos+8] === -1){
+						move = true;
+					//if necessary, check the squares to the left
+					}else if(pos != 7){
+						if(board[pos-1] === -1 || board[pos+6] === -1){
+							move = true;
+						}
+					}
+				//if we are in the bottom row
+				}else if(pos+8 > 48){
+					//only check squares that are not out of bounds
+					for(x = 48; x >= pos+6; x--){
+						if(board[x] === -1){
+							move = true;
+						}
+					}
+					
+					//check all squares to the left and direcly above
+					if(board[pos-1] === -1 || board[pos-7] === -1 || board[pos-8] === -1){
+						move = true;
+					//if necessary, check the squares to the right
+					}else if(pos != 41){
+						if(board[pos+1] === -1 || board[pos-6] === -1){
+							move = true;
+						}
+					}
+				//otherwise, check the squares immediately above and below ours
+				}else if(board[pos-7] === -1 || board[pos+7] ===-1){
+					move = true;
+				//if the move is still not valid
+				}else{
+					//check the left side for all squares not on the left side of the board
+					if(pos%7 > 0){
+						for(x = 0; x < 3; x++){
+							if(board[pos-8+(x*7)] === -1){
+								move = true;
+							}
+						}
+					}
+					//check the right side for all squares not on the right side of the board
+					if(pos%7 < 6){
+						for(x = 0; x < 3; x++){
+							if(board[pos-6+(x*7)] === -1){
+								move = true;
+							}
+						}
+					}
+				}
+				
+				//If the click is a valid move, insert a new piece
+				if(move){
+					board[pos] = -1;
+				}
+			//if the click is on a player piece, select it
+			}else if(board[pos] === -1){
+				selected = pos;
+			}
 		}
 	}
-	
 	if(move){
 		compTurn();
 	}
-	
-	
-
 }, false);
 
 var compTurn = function(){
@@ -269,6 +271,8 @@ var compTurn = function(){
 	xmlWin.send(null);
 	xmlMove.open("GET", ttt + "move/" + boardString(board), true);
 	xmlMove.send(null);
+	
+	playermove = true;
 }
 
 //This resets the game if the "Computer Start" button is clicked.
@@ -285,6 +289,8 @@ document.getElementById("xstart").addEventListener('click', function(event) {
 	board[48] = 1;
 	
 	done = false;
+	playermove = false;
+	compTurn();
 }, false);
 
 //reset the game if the "Player Start" button is clicked. 
@@ -299,6 +305,7 @@ document.getElementById("ostart").addEventListener('click', function(event) {
 	board[48] = 1;
 	
 	done = false;
+	playermove = true;
 }, false);
 
 document.getElementById("pass").addEventListener('click', function(event) {
