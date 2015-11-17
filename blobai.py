@@ -3,17 +3,27 @@ import math
 #Built in functions: score = sum and finish = all
 
 #Check to see if there's a neighbour
-n = [
+n1 = [
 	-8,-7,-6,
 	-1,    1,
 	 6, 7, 8
 ]
 
-r = [
+r1 = [
 	-1,-1,-1,
 	 0,    0,
 	 1, 1, 1
-]
+] 
+
+def conv(board):
+	"""Conv converts the strings fed in into a usable board"""
+	convd = {
+		"x": 1,
+		"o": -1,
+		"b": 0
+	}
+	
+	return map(lambda a: convd[a], list(board))
 
 def neighbour(board, i, move):
 	#top/bottom neighbour
@@ -47,8 +57,7 @@ def bestMove(board, move, alpha, beta, level):
 			passed = False
 			#Make the opposing move
 			board[i] = -1*move
-			#answer = bestMove(board, -1 * move, hist.append(board), alpha, beta, level+1)
-			#answer = bestMove(board, -1 * move, alpha, beta, level+1)
+			
 			if(move > 0):
 				answer = bestMove(board, -1 * move, max(alpha, best), beta, level+1)
 				if(answer >= beta):
