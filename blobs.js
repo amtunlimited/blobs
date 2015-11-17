@@ -40,10 +40,12 @@ var drawO = function(ctx,pos,width,height,color,move) {
 		ctx.arc((width/(7*2))*(2*x+1), (height/(7*2))*(2*y+1), (width/(7*2)) - 5, 0, 7);
 	ctx.stroke();
 	
+	//if the piece belongs to the computer, color it black
 	if(move === 1){
 		ctx.fill()
 	}
 	
+	//If the piece has been selected, color it light grey
 	if(pos === selected){
 		ctx.fillStyle = "LightGrey";
 		ctx.fill();
@@ -58,6 +60,7 @@ var drawBoard = function(ctx,width,height,board) {
 	
 	drawBack(ctx,width,height);
 	
+	//If any board space has a piece, draw that piece
 	for (var i = 0; i < board.length; i++) {
 		if(board[i] != 0){
 			drawO(ctx,i,width,height,black,board[i]);
@@ -88,6 +91,8 @@ var boardString = function(board) {
 //this is the actual board on the page
 var canvas = document.getElementById("board");
 var ctx = canvas.getContext('2d');
+
+//index of the selected piece
 var selected = -1;
 
 //global variables
@@ -96,6 +101,7 @@ for(index = 0; index < 49; index++){
 	board[index] = 0;
 }
 
+//set initial board state
 board[0] = 1;
 board[6] = -1;
 board[42] = -1;
@@ -139,6 +145,7 @@ canvas.addEventListener('click', function(event) {
 			}
 		}
 		
+		//if the click is a valid move, move the selected piece there
 		if(move){
 			board[selected] = 0;
 			board[pos] = -1;
@@ -207,56 +214,62 @@ canvas.addEventListener('click', function(event) {
 				}
 			}
 			
+			//If the click is a valid move, insert a new piece
 			if(move){
 				board[pos] = -1;
 			}
+		//if the click is on a player piece, select it
 		}else if(board[pos] === -1){
 			selected = pos;
 		}
 	}
 	/*
 	if(move){
-		//The part of the http request that is reused.
-		var ttt = "http://aarontag.com/tictactoe/ttt.py/";
-		
-		//All of this stuff is just boilerplate to make an http request from js
-		//This one if to check the win state
-		var xmlWin = new XMLHttpRequest();
-		xmlWin.onreadystatechange = function() { 
-			if (xmlWin.readyState == 4 && xmlWin.status == 200) {
-				//If the returned text is not a number
-				if(isNaN(Number(xmlWin.responseText))) {
-					if(xmlWin.responseText === "t") {
-						alert("It was a tie!");
-					} else {
-						alert(xmlWin.responseText + " won!");
-					}
-					done = true;
-				}
-			}
-		};
-		
-		//This one if for moving
-		var xmlMove = new XMLHttpRequest();
-		xmlMove.onreadystatechange = function() { 
-			if (xmlMove.readyState == 4 && xmlMove.status == 200 && !done) {
-				board[Number(xmlMove.responseText)] = 1;
-				//Only check after the move is made, because concurrency
-				xmlWin.open("GET", ttt + "win/" + boardString(board), true);
-				xmlWin.send(null);
-			}
-		};					
-		
-		//Check if someone won, then ask the computer for a move.
-		xmlWin.open("GET", ttt + "win/" + boardString(board), true);
-		xmlWin.send(null);
-		xmlMove.open("GET", ttt + "move/" + boardString(board), true);
-		xmlMove.send(null);
+		compTurn();
 	}
 	*/
 	
 
 }, false);
+
+var compTurn = function(){
+	//The part of the http request that is reused.
+	var ttt = "http://aarontag.com/blobs/api.py/";
+	
+	//All of this stuff is just boilerplate to make an http request from js
+	//This one if to check the win state
+	var xmlWin = new XMLHttpRequest();
+	xmlWin.onreadystatechange = function() { 
+		if (xmlWin.readyState == 4 && xmlWin.status == 200) {
+			//If the returned text is not a number
+			if(isNaN(Number(xmlWin.responseText))) {
+				if(xmlWin.responseText === "t") {
+					alert("It was a tie!");
+				} else {
+					alert(xmlWin.responseText + " won!");
+				}
+				done = true;
+			}
+		}
+	};
+	
+	//This one if for moving
+	var xmlMove = new XMLHttpRequest();
+	xmlMove.onreadystatechange = function() { 
+		if (xmlMove.readyState == 4 && xmlMove.status == 200 && !done) {
+			board[Number(xmlMove.responseText)] = 1;
+			//Only check after the move is made, because concurrency
+			xmlWin.open("GET", ttt + "win/" + boardString(board), true);
+			xmlWin.send(null);
+		}
+	};					
+	
+	//Check if someone won, then ask the computer for a move.
+	xmlWin.open("GET", ttt + "win/" + boardString(board), true);
+	xmlWin.send(null);
+	xmlMove.open("GET", ttt + "move/" + boardString(board), true);
+	xmlMove.send(null);
+}
 
 //This resets the game if the "Computer Start" button is clicked.
 //Note, given a blank board, the ai will always choose the first space, so no
@@ -286,6 +299,10 @@ document.getElementById("ostart").addEventListener('click', function(event) {
 	board[48] = 1;
 	
 	done = false;
+}, false);
+
+document.getElementById("pass").addEventListener('click', function(event) {
+	compTurn();
 }, false);
 
 //This function is run every 25ms to keep the board updated.
