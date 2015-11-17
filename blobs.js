@@ -284,13 +284,13 @@ document.getElementById("xstart").addEventListener('click', function(event) {
 	}
 	
 	board[0] = 1;
+	board[1] = 1;
 	board[6] = -1;
 	board[42] = -1;
 	board[48] = 1;
 	
 	done = false;
-	playermove = false;
-	compTurn();
+	playermove = true;
 }, false);
 
 //reset the game if the "Player Start" button is clicked. 
