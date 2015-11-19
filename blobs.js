@@ -52,7 +52,7 @@ var drawO = function(ctx,pos,width,height,color,move) {
 	}
 };
 
-//This combines all of the other 'draw's together and draws the 'x's and 'o's 
+//This combines all of the other 'draw's together and draws the pieces
 //according to the 'board' array
 var drawBoard = function(ctx,width,height,board) {
 	var gray = "#CCCCCC";
@@ -130,19 +130,19 @@ canvas.addEventListener('click', function(event) {
 				selected = -1;
 			//if an empty spot on the board has been clicked, see if it is a valid move.
 			}else if(board[pos] === 0){
-				for(x = -2; x < 3; x++){
+				for(a = -2; a < 3; a++){
 					if(selected%7 < 2){
-						if((selected + ((7*x)-selected%7)) <= pos && pos <= (selected + ((7*x)+2))){
+						if((selected + ((7*a)-selected%7)) <= pos && pos <= (selected + ((7*a)+2))){
 							move = true;
 							break;
 						}
 					}else if(selected%7 > 2){
-						if((selected + ((7*x)-2)) <= pos && pos <= (selected + ((7*x)+(6-selected%7)))){
+						if((selected + ((7*a)-2)) <= pos && pos <= (selected + ((7*a)+(6-selected%7)))){
 							move = true;
 							break;
 						}
 					}else{
-						if((selected + ((7*x)-2)) <= pos && pos <= (selected + ((7*x)+2))){
+						if((selected + ((7*a)-2)) <= pos && pos <= (selected + ((7*a)+2))){
 							move = true;
 							break;
 						}
@@ -163,8 +163,8 @@ canvas.addEventListener('click', function(event) {
 				//if we are in the top row
 				if(pos-8 < 0){
 					//only check squares that are not out of bounds
-					for(x = 0; x <= pos - 6; x++){
-						if(board[x] === -1){
+					for(a = 0; a <= pos - 6; a++){
+						if(board[a] === -1){
 							move = true;
 						}
 					}
@@ -181,8 +181,8 @@ canvas.addEventListener('click', function(event) {
 				//if we are in the bottom row
 				}else if(pos+8 > 48){
 					//only check squares that are not out of bounds
-					for(x = 48; x >= pos+6; x--){
-						if(board[x] === -1){
+					for(a = 48; a >= pos+6; a--){
+						if(board[a] === -1){
 							move = true;
 						}
 					}
@@ -203,16 +203,16 @@ canvas.addEventListener('click', function(event) {
 				}else{
 					//check the left side for all squares not on the left side of the board
 					if(pos%7 > 0){
-						for(x = 0; x < 3; x++){
-							if(board[pos-8+(x*7)] === -1){
+						for(a = 0; a < 3; a++){
+							if(board[pos-8+(a*7)] === -1){
 								move = true;
 							}
 						}
 					}
 					//check the right side for all squares not on the right side of the board
 					if(pos%7 < 6){
-						for(x = 0; x < 3; x++){
-							if(board[pos-6+(x*7)] === -1){
+						for(a = 0; a < 3; a++){
+							if(board[pos-6+(a*7)] === -1){
 								move = true;
 							}
 						}
@@ -230,9 +230,60 @@ canvas.addEventListener('click', function(event) {
 		}
 	}
 	if(move){
-		compTurn();
+		playerturn = false;
+		
+		while(!playerturn){
+			compTurn();
+			pass();
+			
+			if(!playerturn){
+				alert("You have no available moves. The computer will play now.");
+			}
+		}
 	}
 }, false);
+
+//determines whether the player has a move available
+var pass = function(){
+	var x, y, a, start, end;
+	var move = false;
+	
+	for(x = 0; x < 49; x++){
+		if(board[x] === -1){
+			for(a = -2; a < 3; a++){
+				if(x%7 < 2){
+					start = x + ((7*a)-x%7);
+					end = x + ((7*a)+2);
+				}else if(x%7 > 2){
+					start = x + ((7*a)-2);
+					end = x + ((7*a)+(6-x%7))
+				}else{
+					start = x + ((7*a)-2);
+					end = x + ((7*a)+2)
+				}
+				
+				if(start >= 0 && end < 49){
+					for(y = start; y < end; y++){
+						if(board[y] === 0){
+							move = true;
+							break;
+						}
+					}
+				}
+				
+				if(move){
+					break;
+				}
+			}
+			
+			if(move){
+				break;
+			}
+		}
+	}
+	
+	playerturn = move;	
+}
 
 var compTurn = function(){
 	//The part of the http request that is reused.
@@ -306,10 +357,6 @@ document.getElementById("ostart").addEventListener('click', function(event) {
 	
 	done = false;
 	playermove = true;
-}, false);
-
-document.getElementById("pass").addEventListener('click', function(event) {
-	compTurn();
 }, false);
 
 //This function is run every 25ms to keep the board updated.
