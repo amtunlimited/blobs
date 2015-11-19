@@ -231,13 +231,13 @@ canvas.addEventListener('click', function(event) {
 	}
 	if(move){
 		compTurn();
+        console.log(boardString(board));
 	}
 }, false);
 
 var compTurn = function(){
 	//The part of the http request that is reused.
 	var ttt = "http://aarontag.com/blobs/api.py/";
-	
 	//All of this stuff is just boilerplate to make an http request from js
 	//This one if to check the win state
 	var xmlWin = new XMLHttpRequest();

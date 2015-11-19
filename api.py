@@ -16,15 +16,15 @@ urls = (
 
 class win:
 	"""The 'win' class is requested when checking a current board for a win state."""
-    def GET(self, boardst):
-        board = tttai.conv(boardst)
-        
-        if(all(board)):
-            if(sum(board)>0):
-                return "x"
-            else:
-                return "o"
-        
+	def GET(self, boardst):
+		board = blobai.conv(boardst)
+
+		if(all(board)):
+			if(sum(board)>0):
+				return "Computer"
+			else:
+				return "Player"
+
 		#This means none of the other stuff happened
 		return 0
 
