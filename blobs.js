@@ -248,26 +248,32 @@ var pass = function(){
 	var x, y, a, start, end;
 	var move = false;
 	
-	for(x = 0; x < 49; x++){
-		if(board[x] === -1){
-			for(a = -2; a < 3; a++){
-				if(x%7 < 2){
-					start = x + ((7*a)-x%7);
-					end = x + ((7*a)+2);
-				}else if(x%7 > 2){
-					start = x + ((7*a)-2);
-					end = x + ((7*a)+(6-x%7))
-				}else{
-					start = x + ((7*a)-2);
-					end = x + ((7*a)+2)
-				}
-				
-				if(start >= 0 && end < 49){
-					for(y = start; y < end; y++){
-						if(board[y] === 0){
-							move = true;
-							break;
+	if(!done){
+		for(x = 0; x < 49; x++){
+			if(board[x] === -1){
+				for(a = -2; a < 3; a++){
+					if(x%7 < 2){
+						start = x + ((7*a)-x%7);
+						end = x + ((7*a)+2);
+					}else if(x%7 > 4){
+						start = x + ((7*a)-2);
+						end = x + ((7*a)+(6-x%7))
+					}else{
+						start = x + ((7*a)-2);
+						end = x + ((7*a)+2)
+					}
+					
+					if(start >= 0 && end < 49){
+						for(y = start; y <= end; y++){
+							if(board[y] === 0){
+								move = true;
+								break;
+							}
 						}
+					}
+					
+					if(move){
+						break;
 					}
 				}
 				
@@ -275,19 +281,18 @@ var pass = function(){
 					break;
 				}
 			}
-			
-			if(move){
-				break;
-			}
 		}
+		
+		playerturn = move;
+	}else{
+		playerturn = true;
 	}
-	
-	playerturn = move;	
 }
 
 var compTurn = function(){
 	//The part of the http request that is reused.
 	var ttt = "http://aarontag.com/blobs/api.py/";
+	
 	//All of this stuff is just boilerplate to make an http request from js
 	//This one if to check the win state
 	var xmlWin = new XMLHttpRequest();
