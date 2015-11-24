@@ -314,7 +314,11 @@ var compTurn = function(){
 	var xmlMove = new XMLHttpRequest();
 	xmlMove.onreadystatechange = function() { 
 		if (xmlMove.readyState == 4 && xmlMove.status == 200 && !done) {
-			board[Number(xmlMove.responseText)] = 1;
+			if(Number(xmlMove.responseText) == -1){
+				alert("The computer has no available moves. Make your next move.");
+			}else{
+				board[Number(xmlMove.responseText)] = 1;
+			}
 			//Only check after the move is made, because concurrency
 			xmlWin.open("GET", ttt + "win/" + boardString(board), true);
 			xmlWin.send(null);
