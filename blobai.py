@@ -15,6 +15,14 @@ r = [
 	 1, 1, 1
 ] 
 
+def passneigh(board, pos):
+    """Generator for the neighbor"""
+    for j in range(-2,3): #col, +/- 7
+        for i in range(-2,3): #row
+            neigh =pos + (i + j*7)
+            if(neigh >= 0 and neigh < 49 and (neigh//7 == (pos//7) + j) and board[neigh]==0):
+                yield neigh
+        
 def conv(board):
 	"""Conv converts the strings fed in into a usable board"""
 	convd = {
@@ -44,7 +52,7 @@ def bestMove(board, move, alpha, beta, level):
 	#All checks if the board is full
 	
 	#This part is to limit levels
-	if(level > 6 or all(board)):
+	if(level > 5 or all(board)):
 	#if(all(board)):
 		#if so, return the sum for the score
 		return sum(board)
@@ -55,8 +63,7 @@ def bestMove(board, move, alpha, beta, level):
 	for i in xrange(len(board)):
 		if(board[i] == 0 and neighbour(board, i, move)):
 			passed = False
-			#Make the opposing move
-			board[i] = -1*move
+			board[i] = move
 			
 			if(move > 0):
 				answer = bestMove(board, -1 * move, max(alpha, best), beta, level+1)
@@ -76,7 +83,33 @@ def bestMove(board, move, alpha, beta, level):
 			
 			#if(answer is not None and (move * best) < (move * answer)):
 			#	best = answer
-		
+	#This is for jumping. Basically the same thing, but jumps instead of add
+	for place in [x for x in range(len(board)) if board[x]==move]:
+	    for i in passneigh(board, place):
+			passed = False
+			board[i] = move
+			board[place] = 0
+			
+			if(move > 0):
+				answer = bestMove(board, -1 * move, max(alpha, best), beta, level+1)
+				if(answer >= beta):
+					board[i] = 0
+					board[place] = move
+					return answer
+				if(answer is not None):
+					best = max(answer, best)
+			else:
+				answer = bestMove(board, -1 * move, alpha, min(beta, best), level+1)
+				if(answer <= alpha):
+					board[i] = 0
+					board[place] = move
+					return answer
+				if(answer is not None):
+					best = min(answer, best)
+			
+			board[i] = 0
+			board[place] = move
+	
 			
 	if(passed):
 		return bestMove(board, -1*move, alpha, beta, level+1)
@@ -95,7 +128,7 @@ def comMove(board):
 			#Make the opposing move
 			board[i] = 1
 			answer = bestMove(board, -1, max(alpha, best), 64, 0)
-			print("The score for move {} is {}".format(i, answer))
+			#print("The score for move {} is {}".format(i, answer))
 			board[i] = 0
 			if(answer is not None and best < answer):
 				best = answer
