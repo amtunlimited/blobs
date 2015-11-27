@@ -128,7 +128,7 @@ def comMove(board):
 			#Make the opposing move
 			board[i] = 1
 			answer = bestMove(board, -1, max(alpha, best), 64, 0)
-			print("The score for move {} is {}".format(i, answer))
+			#print("The score for move {} is {}".format(i, answer))
 			board[i] = 0
 			if(answer is not None and best < answer):
 				best = answer
