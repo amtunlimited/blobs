@@ -134,4 +134,20 @@ def comMove(board):
 				best = answer
 				move = i
 	
+	
+	for place in [x for x in range(len(board)) if board[x]==move]:
+		for i in passneigh(board, place):
+			board[i] = 1
+			board[place] = 0
+			
+			answer = bestMove(board, -1, max(alpha, best), 64, 0)
+			#print("The score for move {} is {}".format(i, answer))
+			board[i] = 0
+			board[place] = 1
+			
+			if(answer is not None and best < answer):
+				best = answer
+				move = (49 * (place+1)) + (to+1)
+	
+	
 	return move
