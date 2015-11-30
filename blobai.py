@@ -52,7 +52,7 @@ def bestMove(board, move, alpha, beta, level):
 	#All checks if the board is full
 	
 	#This part is to limit levels
-	if(level > 5 or all(board)):
+	if(level > 3 or all(board)):
 	#if(all(board)):
 		#if so, return the sum for the score
 		return sum(board)
@@ -147,7 +147,7 @@ def comMove(board):
 			
 			if(answer is not None and best < answer):
 				best = answer
-				move = (49 * (place+1)) + (to+1)
+				move = (49 * (place+1)) + (i+1)
 	
 	
 	return move
