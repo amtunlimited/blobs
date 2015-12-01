@@ -233,6 +233,10 @@ canvas.addEventListener('click', function(event) {
 		playerturn = false;
 		
 		while(!playerturn){
+			if(done){
+				break;
+			}
+			
 			compTurn();
 			pass();
 			
