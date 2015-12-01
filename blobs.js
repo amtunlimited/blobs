@@ -230,9 +230,9 @@ canvas.addEventListener('click', function(event) {
 		}
 	}
 	if(move){
-		playerturn = false;
+		playermove = false;
 		
-		while(!playerturn){
+		while(!playermove){
 			if(done){
 				break;
 			}
@@ -240,7 +240,7 @@ canvas.addEventListener('click', function(event) {
 			compTurn();
 			pass();
 			
-			if(!playerturn){
+			if(!playermove){
 				alert("You have no available moves. The computer will play now.");
 			}
 		}
@@ -287,9 +287,9 @@ var pass = function(){
 			}
 		}
 		
-		playerturn = move;
+		playermove = move;
 	}else{
-		playerturn = true;
+		playermove = true;
 	}
 }
 
