@@ -230,18 +230,21 @@ canvas.addEventListener('click', function(event) {
 		}
 	}
 	if(move){
-		playerturn = false;
+		playermove = false;
 		
-		while(!playerturn){
-			if(done){
-				break;
-			}
+		while(!playermove){
 			
 			compTurn();
-			pass();
 			
-			if(!playerturn){
-				alert("You have no available moves. The computer will play now.");
+			
+			if(runPass) {
+				if(done||playermove){
+					break;
+				}
+				
+				if(!playermove){
+					alert("You have no available moves. The computer will play now.");
+				}
 			}
 		}
 	}
@@ -287,13 +290,14 @@ var pass = function(){
 			}
 		}
 		
-		playerturn = move;
+		playermove = move;
 	}else{
-		playerturn = true;
+		playermove = true;
 	}
 }
 
 var compTurn = function(){
+	runPass = false
 	//The part of the http request that is reused.
 	var ttt = "http://aarontag.com/blobs/api.py/";
 	
@@ -303,6 +307,7 @@ var compTurn = function(){
 	xmlWin.onreadystatechange = function() { 
 		if (xmlWin.readyState == 4 && xmlWin.status == 200) {
 			//If the returned text is not a number
+			console.log(xmlWin.responseText);
 			if(isNaN(Number(xmlWin.responseText))) {
 				if(xmlWin.responseText === "t") {
 					alert("It was a tie!");
@@ -312,9 +317,9 @@ var compTurn = function(){
 					
 					for(index = 0; index < 49; index++){
 						if(board[index] == -1){
-							comp++;
-						}else if(board[index] == 1){
 							player++;
+						}else if(board[index] == 1){
+							comp++;
 						}
 					}
 					
@@ -342,16 +347,18 @@ var compTurn = function(){
 			//Only check after the move is made, because concurrency
 			xmlWin.open("GET", ttt + "win/" + boardString(board), true);
 			xmlWin.send(null);
+			runPass = true
 		}
 	};					
 	
 	//Check if someone won, then ask the computer for a move.
 	xmlWin.open("GET", ttt + "win/" + boardString(board), true);
 	xmlWin.send(null);
-	xmlMove.open("GET", ttt + "move/" + boardString(board), true);
-	xmlMove.send(null);
-	
-	playermove = true;
+	if(!done) {
+		xmlMove.open("GET", ttt + "move/" + boardString(board), true);
+		xmlMove.send(null);
+		playermove = true;
+	}
 }
 
 //This resets the game if the "Computer Start" button is clicked.
