@@ -245,6 +245,7 @@ canvas.addEventListener('click', function(event) {
 				if(!playermove){
 					alert("You have no available moves. The computer will play now.");
 				}
+
 			}
 		}
 	}
