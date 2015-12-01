@@ -123,6 +123,8 @@ def comMove(boardd):
 	best = -64
 	alpha = -64
 	
+	move = -1
+	
 	for i in range(len(board)):
 		if(board[i] == 0 and neighbour(board, i, 1) and i<49):
 			#Make the opposing move
