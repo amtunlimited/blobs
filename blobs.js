@@ -317,8 +317,10 @@ var compTurn = function(){
 			if(Number(xmlMove.responseText) == -1){
 				alert("The computer has no available moves. Make your next move.");
 			}else if(xmlMove.responseText > 48){
-				board[(xmlMove.responseText/49>>0)] = 0;
-				board[(xmlMove.responseText % 49) - 1] = 1;
+				console.log(board);
+				console.log(xmlMove.responseText);
+				board[((xmlMove.responseText/49)>>0)-1] = 0;
+				board[(xmlMove.responseText % 49)-1] = 1;
 			}else{
 				board[Number(xmlMove.responseText)] = 1;
 			}

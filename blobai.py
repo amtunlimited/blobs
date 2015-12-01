@@ -116,26 +116,26 @@ def bestMove(board, move, alpha, beta, level):
 	return best
 
 #same as bestMove, but checking for the computer
-def comMove(board):
+def comMove(boardd):
+	board = boardd[:49]
 	
+		
 	best = -64
 	alpha = -64
 	
-	move = -1
-	
-	for i in xrange(len(board)):
-		if(board[i] == 0 and neighbour(board, i, 1)):
+	for i in range(len(board)):
+		if(board[i] == 0 and neighbour(board, i, 1) and i<49):
 			#Make the opposing move
 			board[i] = 1
 			answer = bestMove(board, -1, max(alpha, best), 64, 0)
-			#print("The score for move {} is {}".format(i, answer))
 			board[i] = 0
 			if(answer is not None and best < answer):
+				print("The score for move {} is {}".format(i, answer))
 				best = answer
 				move = i
 	
 	
-	for place in [x for x in range(len(board)) if board[x]==move]:
+	for place in [x for x in range(len(board)) if board[x]==1]:
 		for i in passneigh(board, place):
 			board[i] = 1
 			board[place] = 0
@@ -148,6 +148,7 @@ def comMove(board):
 			if(answer is not None and best < answer):
 				best = answer
 				move = (49 * (place+1)) + (i+1)
+				print("Place: {} and i: {}".format(place, i))
 	
 	
 	return move
