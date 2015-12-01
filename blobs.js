@@ -233,11 +233,12 @@ canvas.addEventListener('click', function(event) {
 		playermove = false;
 		
 		while(!playermove){
+			compTurn();
+			
 			if(done){
 				break;
 			}
 			
-			compTurn();
 			pass();
 			
 			if(!playermove){
@@ -312,9 +313,9 @@ var compTurn = function(){
 					
 					for(index = 0; index < 49; index++){
 						if(board[index] == -1){
-							comp++;
-						}else if(board[index] == 1){
 							player++;
+						}else if(board[index] == 1){
+							comp++;
 						}
 					}
 					
