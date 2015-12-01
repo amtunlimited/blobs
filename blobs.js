@@ -303,7 +303,18 @@ var compTurn = function(){
 				if(xmlWin.responseText === "t") {
 					alert("It was a tie!");
 				} else {
-					alert(xmlWin.responseText + " won!");
+					var comp = 0;
+					var player = 0;
+					
+					for(index = 0; index < 49; index++){
+						if(board[index] == -1){
+							comp++;
+						}else if(board[index] == 1){
+							player++;
+						}
+					}
+					
+					alert("Computer: " + comp + "\nPlayer: " + player + "\n\n" + xmlWin.responseText + " won!");
 				}
 				done = true;
 			}
